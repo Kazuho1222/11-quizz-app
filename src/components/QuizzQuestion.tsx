@@ -1,7 +1,7 @@
 function QuizzQuestion() {
   return (
-    <div>
-      question: 東京ディズニーランドとBの共通点な～んだ？
+    <div className="font-bold text-2xl text-slate-600 p-4">
+      東京ディズニーランドとBの共通点<br></br>な～んだ？
     </div>
   )
 }

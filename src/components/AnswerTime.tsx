@@ -7,7 +7,9 @@ function MyTimer({ expiryTimestamp }: { expiryTimestamp: Date }) {
 
   return (
     <div>
-      <span>{seconds}</span>秒
+
+
+      <progress max="10" value={seconds}></progress>
     </div >
   );
 }
@@ -16,7 +18,7 @@ function AnswerTime() {
   const time = new Date();
   time.setSeconds(time.getSeconds() + 10);
   return (
-    <div>
+    <div className="pb-2">
       <MyTimer expiryTimestamp={time} />
     </div >
   );

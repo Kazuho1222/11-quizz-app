@@ -11,9 +11,13 @@ function App() {
       <QuizzQuestion />
       <AnswerTime />
       <Answer />
-      <button className='bg-red-600 p-4 text-white rounded-full'>
-        <FaRegHand />
-      </button>
+      <div className='p-4'>
+        <button className='bg-red-600 p-4 text-white rounded-full'>
+          <FaRegHand />
+        </button>
+
+
+      </div>
     </div>
 
   )
