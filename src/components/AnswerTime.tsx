@@ -7,8 +7,6 @@ function MyTimer({ expiryTimestamp }: { expiryTimestamp: Date }) {
 
   return (
     <div>
-
-
       <progress max="10" value={seconds}></progress>
     </div >
   );

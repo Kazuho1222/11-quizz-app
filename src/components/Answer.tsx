@@ -1,7 +1,8 @@
+import AnswerTime from './AnswerTime'
 
 function Answer() {
   return (
-    <input className="rounded-md p-2 border-2 text-xs" type='text' placeholder='答えを入力してください' />
+    <div>正解！解答時間は<AnswerTime />秒でした。</div>
   )
 }
 
