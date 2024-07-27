@@ -1,25 +1,47 @@
-import { useTimer } from "react-timer-hook";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
-function MyTimer({ expiryTimestamp }: { expiryTimestamp: Date }) {
-  const {
-    seconds,
-  } = useTimer({ expiryTimestamp, onExpire: () => console.warn('onExpire called') });
-
-  return (
-    <div>
-      <progress max="10" value={seconds}></progress>
-    </div >
-  );
+export interface MyTimeHandle {
+  start: () => void;
+  stop: () => void;
+  getTime: () => number;
 }
 
-function AnswerTime() {
-  const time = new Date();
-  time.setSeconds(time.getSeconds() + 10);
+
+const AnswerTime = forwardRef<MyTimeHandle>((_, ref) => {
+  const [time, setTime] = useState<number>(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  useImperativeHandle(ref, () => ({
+    start() {
+      setTime(0);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(() => {
+        setTime(prevTime => prevTime + 1);
+      }, 1000);
+    },
+    stop() {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    },
+    getTime() {
+      return time;
+    },
+  }));
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
+
   return (
-    <div className="pb-2">
-      <MyTimer expiryTimestamp={time} />
+    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+      <div
+        className="bg-blue-600 h-2.5 rounded-full"
+        style={{ width: `${100 - (time / 10) * 100}%` }}
+      >
+      </div>
     </div >
   );
-}
+})
 
 export default AnswerTime

@@ -2,37 +2,40 @@ import { useEffect, useRef, useState } from 'react'
 import { FaRegHand } from 'react-icons/fa6'
 import './App.css'
 import AnswerInput from './components/AnswerInput'
-import AnswerTime, { MyTimer } from './components/AnswerTime'
+import AnswerTime, { MyTimeHandle } from './components/AnswerTime'
 import QuizzQuestion from './components/QuizzQuestion'
 
 function App() {
   const inputEl = useRef<HTMLInputElement | null>(null)
+  const timerRef = useRef<MyTimeHandle | null>(null);
   const [text, setText] = useState("")
   const [showInput, setShowInput] = useState<boolean>(true)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const correctAnswer = 'your_correct_answer_here'
+  const [answerTime, setAnswerTime] = useState<number>(0);
+  const correctAnswer = 'your_correct_answer_here';
 
   const handleClick = () => {
-    if (inputEl.current) {
+    if (inputEl.current && timerRef.current) {
       const userAnswer = inputEl.current.value
       setText(userAnswer)
       setShowInput(false)
+      timerRef.current.stop()
+      const timeTaken = timerRef.current.getTime()
+      setAnswerTime(timeTaken)
       setIsCorrect(userAnswer === correctAnswer)
     }
   }
 
   useEffect(() => {
-    if (inputEl.current) {
-      inputEl.current.focus()
+    if (showInput && timerRef.current) {
+      timerRef.current.start()
     }
   }, [showInput])
-
-
 
   return (
     <div className='container p-4 mx-auto'>
       <QuizzQuestion />
-      <AnswerTime />
+      <AnswerTime ref={timerRef} />
       {showInput ? (
         <>
           <AnswerInput inputRef={inputEl} />
@@ -45,7 +48,7 @@ function App() {
       ) : (
         <div className='p-4'>
           {isCorrect ? (
-            <p className='text-green-500'>正解です！解答時間は何秒でした。</p>
+            <p className='text-green-500'>正解です！解答時間は{answerTime}秒でした。</p>
           ) : (
             <p className='text-red-500'>間違いです。正解は{correctAnswer}です。</p>
           )}
