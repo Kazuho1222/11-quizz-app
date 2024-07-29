@@ -1,40 +1,37 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-export interface MyTimeHandle {
-  start: () => void;
-  stop: () => void;
-  getTime: () => number;
+interface AnswerTimeProps {
+  startTimer: boolean;
+  stopTimer: boolean;
+  onTimeUpdate: (time: number) => void;
 }
 
-
-const AnswerTime = forwardRef<MyTimeHandle>((_, ref) => {
+const AnswerTime = ({ startTimer, stopTimer, onTimeUpdate }: AnswerTimeProps) => {
   const [time, setTime] = useState<number>(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
-  useImperativeHandle(ref, () => ({
-    start() {
-      setTime(0);
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(() => {
-        setTime(prevTime => prevTime + 1);
-      }, 1000);
-    },
-    stop() {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    },
-    getTime() {
-      return time;
-    },
-  }));
-
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
+    let interval: NodeJS.Timeout | null = null;
+
+    if (startTimer) {
+      interval = setInterval(() => {
+        setTime((prevTime) => {
+          const newTime = prevTime + 1;
+          onTimeUpdate(newTime);
+          return newTime;
+        });
+      }, 1000);
     }
-  }, [])
+
+    if (stopTimer && interval) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [startTimer, stopTimer, onTimeUpdate]);
 
   return (
-    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
       <div
         className="bg-blue-600 h-2.5 rounded-full"
         style={{ width: `${100 - (time / 10) * 100}%` }}
@@ -42,6 +39,6 @@ const AnswerTime = forwardRef<MyTimeHandle>((_, ref) => {
       </div>
     </div >
   );
-})
+}
 
 export default AnswerTime
